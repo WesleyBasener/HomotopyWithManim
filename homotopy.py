@@ -49,16 +49,19 @@ class PathHomotopyOnTorus(ThreeDScene):
         curve2 = Polygon(*c2_points)
         curve2.set_color(ORANGE)
 
-         # create group for 2d objects needed in 3d
+        # create group for 2d objects needed in 3d
         line_group = VGroup()
         
         line_group.add(curve1)
         line_group.add(curve2)
         curves = []
-        for i in range(100):
+
+        for i in range(0, 100, 5):
             h_points = np.array([path_homot(t, i) for t in np.linspace(0, 1, 100)])
             curves.append(Polygon(*h_points).set_color(YELLOW))
-            line_group.add(curves[i])
+            line_group.add(curves[-1])
+
+        curves.append(curve2)
 
         # increase granularity if you still see "popping" but 20 should be enough
         granularity_3d = 100
@@ -76,16 +79,14 @@ class PathHomotopyOnTorus(ThreeDScene):
         self.add(curve1)
         self.add(curve2)
         self.add(torus)
-        #self.add_foreground_mobjects(torus)
 
         # Rotate the camera for a better view
         self.move_camera(zoom = 2, phi=75 * DEGREES, theta=15 * DEGREES, run_time=3)
 
-        #index = [4, 9, 14, 19, 24, 29, 34, 39, 44, 49, 54, 59, 64, 69, 74, 79, 84, 89, 94, 99]
-        #index = [19, 39, 59, 79, 99]
-        for i in range(100):
+        for curve in curves:
             #h_points = np.array([path_homot(t, i) for t in np.linspace(0, 1, 100)])
-            self.play(Transform(curve1, curves[i], run_time=0.1, rate_func=linear))
+            self.play(Transform(curve1, curve, run_time=0.2, rate_func=linear))
+        self.play(Transform(curve1, curve2, run_time=0.25, rate_func=linear))
 
         # Pause to display the final state
         self.wait(2)
